@@ -1,0 +1,18 @@
+PokerMessenger - app allowing poker to be played on messenger
+
+PokerMessenger allows poker to be played on messenger groups.
+It uses the pokerlib library for basic poker methods and 
+the great fbchat module for io.
+
+For specific details about app's usage visit the info page
+at https://kuco23.github.io/pokermessenger/documentation.html.
+
+license
+-------
+GNU General Public License v3.0
+
+pokerlib's repo is at
+https://github.com/kuco23/pokerlib
+
+fbchat 's repo is at
+https://github.com/carpedm20/fbchat

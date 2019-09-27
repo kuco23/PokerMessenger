@@ -1,15 +1,11 @@
 # Originaly made with fbchat Version 1.3.9
 # Dealer class is a singleton!
 
-from sys import path
-from pathlib import Path
 import argparse
 import sqlite3
 
 from fbchat import Client
 from fbchat.models import *
-
-path.append(str(Path().cwd().parent))
 
 from pokerlib.enums import *
 from pokerlib import HandParser, HandParserGroup
