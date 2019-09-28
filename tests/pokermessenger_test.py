@@ -62,11 +62,11 @@ class TestPlayer():
 def simpleGame(nplayers, action):
     dealer = TestDealer(None, None)
     TestPlayer.dealer = dealer
-    thread_id = 250
+    thread_id = '250'
 
     players = []
     for i in range(nplayers):
-        p = TestPlayer(i, 'user' + str(i), thread_id)
+        p = TestPlayer(str(i), 'user' + str(i), thread_id)
         players.append(p)
 
     players[0].send(INITIALIZE_TABLE)

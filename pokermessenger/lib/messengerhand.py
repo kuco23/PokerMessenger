@@ -7,7 +7,7 @@ def reprCards(cards):
     )
 
 def reprKickers(kickers):
-    return '+'.join(VALUES[card] for card in kickers)
+    return '+'.join(VALUES[card] for card in kickers) or "none"
 
 def describeHand(hand):
     base_cards = list(hand.handbasecards)

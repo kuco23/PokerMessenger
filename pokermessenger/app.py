@@ -107,14 +107,14 @@ class Dealer(Client):
         return Player(thread_id, p_id, user_info.name, money)
 
     def __resolvePlayer(self, player):
-        args = CONNECTION, 'players', 'fbid', player_id
+        args = CONNECTION, 'players', 'fbid', player.id
         pl_data = sqlmeths.getasdict(*args)
         tbl_data = sqlmeths.getasdicts(
             CONNECTION,
             'tablemoneys',
             'tblid',
             'money',
-            {'fbid': player_id}
+            {'fbid': player.id}
         )
 
         pl_data['money'] += tbl_data[player.table_id]
@@ -551,7 +551,7 @@ class Dealer(Client):
         elif _id == PublicOutId.PLAYERRAISE:
             player = _round.players.getPlayerById(player_id)
             self.__playerUpdateDbMoney(player)
-            send = PLAYER_RAISE(player.name, raise_by)
+            send = PLAYER_RAISE.format(player.name, raised_by)
 
         elif _id == PublicOutId.PLAYERALLIN:
             player = _round.players.getPlayerById(player_id)
@@ -606,52 +606,52 @@ class Dealer(Client):
             self.__resolvePlayer(player)
 
 
-players_sql = '''
-CREATE TABLE IF NOT EXISTS players(
-    id integer PRIMARY KEY,
-    fbid integer NOT NULL,
-    name text NOT NULL,
-    money integer,
-    timestamp text
-)
-'''
-tablemoneys_sql = '''
-CREATE TABLE IF NOT EXISTS tablemoneys(
-    id integer PRIMARY KEY,
-    fbid integer NOT NULL,
-    tblid integer NOT NULL,
-    money integer
-)
-'''
-sqlmeths.executesql(CONNECTION, players_sql, tablemoneys_sql)
-
-# this has to be done before every app rerun
-# in case anyone left the money on some table
-for fbid in sqlmeths.getcol(CONNECTION, 'players', 'fbid'):
-    fbid = fbid[0]
-    leftovers = sqlmeths.getasdicts(
-        CONNECTION,
-        'tablemoneys',
-        'tblid',
-        'money',
-        {'fbid': fbid}
-    )
-    playerdata = sqlmeths.getasdict(
-        CONNECTION,
-        'players',
-        'fbid',
-        fbid
-    )
-    playerdata['money'] += sum(leftovers.values())
-    sqlmeths.update(
-        CONNECTION,
-        'players',
-        playerdata,
-        {'fbid': fbid}
-    )
-sqlmeths.emptytable(CONNECTION, 'tablemoneys')
-
-# game continuation
 if __name__ == '__main__':
+
+    players_sql = '''
+    CREATE TABLE IF NOT EXISTS players(
+        id integer PRIMARY KEY,
+        fbid text NOT NULL,
+        name text NOT NULL,
+        money integer,
+        timestamp text
+    )
+    '''
+    tablemoneys_sql = '''
+    CREATE TABLE IF NOT EXISTS tablemoneys(
+        id integer PRIMARY KEY,
+        fbid text NOT NULL,
+        tblid text NOT NULL,
+        money integer
+    )
+    '''
+    sqlmeths.executesql(CONNECTION, players_sql, tablemoneys_sql)
+
+    # this has to be done before every app rerun
+    # in case anyone left the money on some table
+    for fbid in sqlmeths.getcol(CONNECTION, 'players', 'fbid'):
+        fbid = fbid[0]
+        leftovers = sqlmeths.getasdicts(
+            CONNECTION,
+            'tablemoneys',
+            'tblid',
+            'money',
+            {'fbid': fbid}
+        )
+        playerdata = sqlmeths.getasdict(
+            CONNECTION,
+            'players',
+            'fbid',
+            fbid
+        )
+        playerdata['money'] += sum(leftovers.values())
+        sqlmeths.update(
+            CONNECTION,
+            'players',
+            playerdata,
+            {'fbid': fbid}
+        )
+    sqlmeths.emptytable(CONNECTION, 'tablemoneys')
+
     dealer = Dealer(USERNAME, PASSWORD)
     dealer.listen()
