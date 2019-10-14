@@ -411,13 +411,11 @@ class Dealer(Client):
             if message.split()[1].isdigit():
                 raise_by = int(float(message.split()[1]))
                 table.round.privateIn(
-                    author_id,
                     ROUND_STATEMENTS[RAISE],
                     raise_by
                 )
 
         else: table.round.privateIn(
-            author_id,
             ROUND_STATEMENTS[message]
         )
 
