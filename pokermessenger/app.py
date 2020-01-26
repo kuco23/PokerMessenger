@@ -509,7 +509,7 @@ class Dealer(Client):
         )
 
     def roundPublicOut(self, _round, _id, **kwargs):
-        globals().update(kwargs) # not permanant
+        globals().update(kwargs) # not permanent
 
         if _id == PublicOutId.NEWROUND:
             send = NEW_ROUND
